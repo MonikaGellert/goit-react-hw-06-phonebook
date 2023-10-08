@@ -1,16 +1,25 @@
-import React from 'react';
-import ContactForm from './ContactForm/ContactForm.jsx';
-import ContactList from './ContactList/ContactList.jsx';
-import Filter from './Filter/Filter.jsx';
-import styles from './App.module.css';
-export const App = () => {
+import s from './App.module.css';
+import ContactList from './ContactList/ContactList';
+import ContactForm from './ContactForm';
+import Filter from './Filter';
+
+export default function App() {
   return (
-    <div className={styles.app}>
-      <h1 className={styles.title}>Phonebook</h1>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        fontSize: 18,
+        color: '#010101',
+      }}
+    >
+      <h1>Phonebook</h1>
       <ContactForm />
-      <h2 className={styles.section}>Contacts</h2>
+      <h2 className={s.titleContacts}>Contacts</h2>
       <Filter />
-      <ContactList className={styles.section} />
+      <ContactList />
     </div>
   );
-};
+}

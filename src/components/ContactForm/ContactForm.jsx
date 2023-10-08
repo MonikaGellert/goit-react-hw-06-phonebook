@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from '../../redux/contactsActions';
-import { nanoid } from 'nanoid';
-import styles from './ContactForm.module.css';
+import s from './ContactForm.module.css';
+import {
+  useAddContactMutation,
+  useGetContactsApiQuery,
+} from 'redux/contactsApi';
 
-const ContactForm = () => {
+export default function ContactForm() {
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState(''); 
-  const dispatch = useDispatch();
-  const data = useSelector(state => state.contacts); 
+  const [phone, setPhone] = useState('');
+  const [addContact] = useAddContactMutation();
+  const { data } = useGetContactsApiQuery();
 
   const handleChange = e => {
     const prop = e.currentTarget.name;
@@ -16,14 +17,13 @@ const ContactForm = () => {
       case 'name':
         setName(e.currentTarget.value);
         break;
-      case 'phone': 
+      case 'phone':
         setPhone(e.currentTarget.value);
         break;
       default:
         throw new Error('Error');
     }
   };
-
 
   const handleAddContact = async e => {
     e.preventDefault();
@@ -32,41 +32,47 @@ const ContactForm = () => {
     ) {
       setName('');
       setPhone('');
-      return alert(`Contact with name: ${name} is already in phonebook`); 
+      return alert(`Number: ${name} is already in phonebook`);
     }
     if (name && phone) {
-      const newContact = { id: nanoid(), name, phone }; 
-      await dispatch(addContact(newContact)); 
+      await addContact({ name: name, phone: phone }).unwrap();
       setName('');
       setPhone('');
     }
   };
 
   return (
-    <form className={styles.form} onSubmit={handleAddContact}>
-      <input
-        type="text"
-        name="name"
-        value={name}
-        onChange={handleChange} 
-        placeholder="Enter name"
-        required
-        className={styles.input}
-      />
-      <input
-        type="tel"
-        name="phone"
-        value={phone}
-        onChange={handleChange} 
-        placeholder="Enter number"
-        required
-        className={styles.input}
-      />
-      <button type="submit" className={styles.button}>
+    <form className={s.form} onSubmit={handleAddContact}>
+      <label>
+        Name
+        <input
+          className={s.inputName}
+          value={name}
+          onChange={handleChange}
+          type="text"
+          name="name"
+          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+          title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+          required
+        />
+      </label>
+      <label>
+        Number
+        <input
+          className={s.inputNumber}
+          value={phone}
+          onChange={handleChange}
+          type="tel"
+          name="phone"
+          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+          title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
+          required
+        />
+      </label>
+
+      <button type="submit" className={s.buttonEditor}>
         Add contact
       </button>
     </form>
   );
-};
-
-export default ContactForm;
+}

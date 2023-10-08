@@ -1,18 +1,7 @@
-.app {
-  text-align: center;
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(71, 5, 51, 0.1);
+.allContacts {
+  margin-bottom: 10px;
 }
 
-.title {
-  margin-bottom: 20px;
-  font-size: 24px;
-}
-
-.section {
-  margin-top: 20px;
+.titleContacts {
+  margin-top: 70px;
 }

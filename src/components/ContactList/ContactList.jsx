@@ -1,34 +1,47 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { deleteContact } from '../../redux/contactsActions';
-import { nanoid } from 'nanoid'; // Importuj nanoid
-import styles from './ContactList.module.css';
+import s from './ContactList.module.css';
+import ContactItem from '../ContactItem/ContactItem';
+import { useSelector } from 'react-redux';
+import { useGetContactsApiQuery } from 'redux/contactsApi';
 
 const ContactList = () => {
-  const { contacts, filter } = useSelector(state => state);
-  const dispatch = useDispatch();
-  const getFilteredContacts = () => {
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filter.toLowerCase())
+  const { data, isLoading } = useGetContactsApiQuery();
+  const filter = useSelector(state => state.filter.value);
+
+  console.log(data);
+
+  const filteredContacts = () => {
+    const normalizeFilter = filter.toLowerCase();
+    return (
+      data &&
+      data.filter(contact =>
+        contact.name.toLowerCase().includes(normalizeFilter)
+      )
     );
   };
 
-  const filteredContacts = getFilteredContacts();
+  const filterEl = filteredContacts();
 
   return (
-    <ul className={styles.list}>
-      {filteredContacts.map(contact => (
-        <li key={nanoid()} className={styles.item}>
-          {contact.name}: {contact.number}
-          <button
-            className={styles.button}
-            onClick={() => dispatch(deleteContact(contact.id))}
-          >
-            Delete
-          </button>
-        </li>
-      ))}
-    </ul>
+    <>
+      {isLoading && <p>Loading...</p>}
+      {
+        <ul className={s.list}>
+          {!isLoading && data && filterEl.length > 0 ? (
+            filterEl.map(({ id, name, phone }) => (
+              <ContactItem
+                key={id}
+                data={filterEl}
+                id={id}
+                name={name}
+                phone={phone}
+              />
+            ))
+          ) : (
+            <p className={s.text}>No contacts</p>
+          )}
+        </ul>
+      }
+    </>
   );
 };
 
