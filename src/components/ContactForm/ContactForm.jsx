@@ -1,78 +1,55 @@
 import React, { useState } from 'react';
-import s from './ContactForm.module.css';
-import {
-  useAddContactMutation,
-  useGetContactsApiQuery,
-} from 'redux/contactsApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact } from '../../redux/contactsActions';
+import { nanoid } from 'nanoid';
+import styles from './ContactForm.module.css';
 
-export default function ContactForm() {
+const ContactForm = () => {
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [addContact] = useAddContactMutation();
-  const { data } = useGetContactsApiQuery();
+  const [number, setNumber] = useState('');
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts);
 
-  const handleChange = e => {
-    const prop = e.currentTarget.name;
-    switch (prop) {
-      case 'name':
-        setName(e.currentTarget.value);
-        break;
-      case 'phone':
-        setPhone(e.currentTarget.value);
-        break;
-      default:
-        throw new Error('Error');
-    }
-  };
+  const handleSubmit = event => {
+    event.preventDefault();
+    const newContact = { id: nanoid(), name, number };
 
-  const handleAddContact = async e => {
-    e.preventDefault();
-    if (
-      data.find(contact => contact.name.toLowerCase() === name.toLowerCase())
-    ) {
-      setName('');
-      setPhone('');
-      return alert(`Number: ${name} is already in phonebook`);
+    // Sprawdź, czy kontakt o takim id już istnieje
+    if (contacts.some(contact => contact.name === newContact.name)) {
+      alert(`${newContact.name} is already in contacts.`);
+      return;
     }
-    if (name && phone) {
-      await addContact({ name: name, phone: phone }).unwrap();
-      setName('');
-      setPhone('');
-    }
+
+    dispatch(addContact(newContact));
+    setName('');
+    setNumber('');
   };
 
   return (
-    <form className={s.form} onSubmit={handleAddContact}>
-      <label>
-        Name
-        <input
-          className={s.inputName}
-          value={name}
-          onChange={handleChange}
-          type="text"
-          name="name"
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-          title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-          required
-        />
-      </label>
-      <label>
-        Number
-        <input
-          className={s.inputNumber}
-          value={phone}
-          onChange={handleChange}
-          type="tel"
-          name="phone"
-          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-          title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-          required
-        />
-      </label>
-
-      <button type="submit" className={s.buttonEditor}>
+    <form className={styles.form} onSubmit={handleSubmit}>
+      <input
+        type="text"
+        name="name"
+        value={name}
+        onChange={e => setName(e.target.value)}
+        placeholder="Enter name"
+        required
+        className={styles.input}
+      />
+      <input
+        type="tel"
+        name="number"
+        value={number}
+        onChange={e => setNumber(e.target.value)}
+        placeholder="Enter number"
+        required
+        className={styles.input}
+      />
+      <button type="submit" className={styles.button}>
         Add contact
       </button>
     </form>
   );
-}
+};
+
+export default ContactForm;

@@ -1,7 +1,23 @@
-.allContacts {
-  margin-bottom: 10px;
+.app {
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  
 }
 
-.titleContacts {
-  margin-top: 70px;
+.title {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.section {
+  margin-top: 20px;
+}
+body{
+  background-color: rgb(150, 238, 238);
 }
