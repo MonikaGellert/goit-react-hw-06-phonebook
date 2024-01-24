@@ -4,7 +4,7 @@ import contactsReducer from './redux/contactsReducer';
 import filterReducer from './redux/filterReducer';
 import { loadState, saveState } from './Utils/LocalStorage';
 
-// Załaduj stan z lokalnego składu
+
 const preloadedState = loadState();
 
 export const store = configureStore({
@@ -12,10 +12,10 @@ export const store = configureStore({
     contacts: contactsReducer,
     filter: filterReducer,
   },
-  preloadedState, // Ustaw wcześniej załadowany stan
+  preloadedState, 
 });
 
-// Subskrybuj zmiany w sklepie Redux, aby zapisywać stan do lokalnego składu
+
 store.subscribe(() => {
   saveState(store.getState());
 });
